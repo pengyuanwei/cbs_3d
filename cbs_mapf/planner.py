@@ -21,6 +21,7 @@ from .constraint_tree import CTNode
 from .constraints import Constraints
 from .agent import Agent
 from .assigner import *
+
 class Planner:
 
     def __init__(self, grid_size: int,
@@ -219,4 +220,3 @@ class Planner:
             padded = np.concatenate([path, np.array(list([path[-1]])*(max_-len(path)))])
             solution[agent] = padded
         return solution
-
