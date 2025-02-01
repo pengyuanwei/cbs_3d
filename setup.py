@@ -21,8 +21,7 @@ setuptools.setup(
     packages = setuptools.find_packages(),
     install_requires = [            # I get to this in a second
         'numpy',
-        'scipy',
-        'space-time-astar'
+        'scipy'
     ],
     classifiers = [
         'Development Status :: 4 - Beta',      # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
