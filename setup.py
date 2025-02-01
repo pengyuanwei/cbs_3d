@@ -13,8 +13,9 @@ setuptools.setup(
     maintainer_email="ucabpw3@ucl.ac.uk",
     url = https://github.com/pengyuanwei/CBS-3D'',   # Provide either the link to your github or to your website
     description = 'Anonymous Multi-Agent Path Finding with Conflict-Based Search and Space-Time A*',   # Give a short description about your library
-    long_description="This project is based on [Multi-Agent Path Finding](https://github.com/GavinPHR/Multi-Agent-Path-Finding). Modified and maintained by [Your Name].",  
-    
+    long_description=long_description,
+    long_description_content_type='text/markdown'    
+
     license='MIT',    # Chose a license from here: https://help.github.com/articles/licensing-a-repository
     keywords = ['multi-agent-path-finding', 'anonymous-agent', 'conflict-based-search', 'mapf', 'cbs', 'a-star'],   # Keywords that define your package best
     packages=setuptools.find_packages(),
