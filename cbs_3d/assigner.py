@@ -7,7 +7,7 @@ from typing import List, Tuple
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 
-from .agent import Agent
+from agent import Agent
 
 # Hungarian algorithm for global minimal cost
 def min_cost(starts: List[Tuple[int, int]], goals: List[Tuple[int, int]]):

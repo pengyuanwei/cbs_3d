@@ -6,8 +6,8 @@ Email: gavinsweden@gmail.com
 from typing import Dict
 import numpy as np
 
-from .agent import Agent
-from .constraints import Constraints
+from agent import Agent
+from constraints import Constraints
 
 class CTNode:
 

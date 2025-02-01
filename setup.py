@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name = 'cbs3d',      # How you named your package folder (MyLib)
+    name = 'cbs_3d',      # How you named your package folder (MyLib)
     version = '1.0',      # Start with a small number and increase it with every change you make
     author = 'Haoran Peng',
     author_email = 'gavinsweden@gmail.com',
@@ -18,7 +18,7 @@ setuptools.setup(
 
     license = 'MIT',    # Chose a license from here: https://help.github.com/articles/licensing-a-repository
     keywords = ['multi-agent-path-finding', 'anonymous-agent', 'conflict-based-search', 'mapf', 'cbs', 'a-star'],   # Keywords that define your package best
-    packages = setuptools.find_packages(),
+    packages = setuptools.find_packages(),  # 自动寻找包含 __init__.py 的文件夹
     install_requires = [            # I get to this in a second
         'numpy',
         'scipy'

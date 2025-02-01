@@ -18,12 +18,11 @@ import numpy as np
 from stastar.planner import Planner as STPlanner
 
 from .constraint_tree import CTNode
-from .constraints import Constraints
-from .agent import Agent
-from .assigner import *
+from constraints import Constraints
+from agent import Agent
+from assigner import *
 
 class Planner:
-
     def __init__(self, grid_size: int,
                        robot_radius: int,
                        static_obstacles: List[Tuple[int, int]]):

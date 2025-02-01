@@ -6,7 +6,7 @@ Email: gavinsweden@gmail.com
 from typing import Dict, Tuple, Set
 from copy import deepcopy
 
-from .agent import Agent
+from agent import Agent
 
 '''
 Emulated dictionary of dictionaries

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 '''
-Author: Haoran Peng
-Email: gavinsweden@gmail.com
+Modified based on [Multi-Agent Path Finding](https://github.com/GavinPHR/Multi-Agent-Path-Finding)
+Copyright (c) 2020 [Haoran Peng]
+Copyright (c) 2025 [Pengyuan Wei]
+Released under the MIT License
 '''
 from typing import Tuple
 import numpy as np
