@@ -1,0 +1,14 @@
+---
+GOAL:
+- !!python/tuple [540, 565]
+- !!python/tuple [835, 565]
+- !!python/tuple [1080, 565]
+- !!python/tuple [1370, 565]
+GRID_SIZE: 30
+RECT_OBSTACLES:
+ROBOT_RADIUS: 110
+START:
+- !!python/tuple [331, 165]
+- !!python/tuple [1530, 165]
+- !!python/tuple [315, 951]
+- !!python/tuple [1530, 951]

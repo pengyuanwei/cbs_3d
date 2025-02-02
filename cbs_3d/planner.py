@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 '''
-Author: Haoran Peng
-Email: gavinsweden@gmail.com
+Modified based on [Multi-Agent Path Finding](https://github.com/GavinPHR/Multi-Agent-Path-Finding)
+Copyright (c) 2020 [Haoran Peng]
+Copyright (c) 2025 [Pengyuan Wei]
+Released under the MIT License
 
-An implementation of multi-agent path finding using conflict-based search
-[Sharon et al., 2015]
+An implementation of multi-agent path finding using conflict-based search [Sharon et al., 2015]
 '''
-from typing import List, Tuple, Dict, Callable, Set
+from typing import Optional, List, Tuple, Dict, Callable, Set
 import multiprocessing as mp
 from heapq import heappush, heappop
 from itertools import combinations
@@ -14,18 +15,19 @@ from copy import deepcopy
 import numpy as np
 
 # The low level planner for CBS is the Space-Time A* planner
-# https://github.com/GavinPHR/Space-Time-AStar
-from stastar.planner import Planner as STPlanner
+# https://github.com/pengyuanwei/space_time_a_star
+from space_time_a_star.planner import Planner as STPlanner
 
 from .constraint_tree import CTNode
-from constraints import Constraints
-from agent import Agent
-from assigner import *
+from .constraints import Constraints
+from .agent import Agent
+from .assigner import *
 
 class Planner:
     def __init__(self, grid_size: int,
                        robot_radius: int,
-                       static_obstacles: List[Tuple[int, int]]):
+                       static_obstacles: Optional[List[Tuple[int, ...]]] = None,
+                       three_dimension: bool = False):
 
         self.robot_radius = robot_radius
         self.st_planner = STPlanner(grid_size, robot_radius, static_obstacles)
@@ -36,11 +38,11 @@ class Planner:
     '''
     def plan(self, starts: List[Tuple[int, int]],
                    goals: List[Tuple[int, int]],
-                   assign:Callable = min_cost,
-                   max_iter:int = 200,
-                   low_level_max_iter:int = 100,
-                   max_process:int = 10,
-                   debug:bool = False) -> np.ndarray:
+                   assign: Callable = min_cost,
+                   max_iter: int = 200,
+                   low_level_max_iter: int = 100,
+                   max_process: int = 10,
+                   debug: bool = False) -> np.ndarray:
 
         self.low_level_max_iter = low_level_max_iter
         self.debug = debug
@@ -81,7 +83,7 @@ class Planner:
             for result in results:
                 if len(result) == 1:
                     if debug:
-                        print('CBS_MAPF: Paths found after about {0} iterations'.format(4 * iter_))
+                        print('cbs_3d: Paths found after about {0} iterations'.format(4 * iter_))
                     return result[0]
                 if result[0]:
                     heappush(open, result[0])
@@ -89,7 +91,7 @@ class Planner:
                     heappush(open, result[1])
 
         if debug:
-            print('CBS-MAPF: Open set is empty, no paths found.')
+            print('cbs_3d: Open set is empty, no paths found.')
         return np.array([])
 
     '''

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 '''
-Author: Haoran Peng
-Email: gavinsweden@gmail.com
+Modified based on [Multi-Agent Path Finding](https://github.com/GavinPHR/Multi-Agent-Path-Finding)
+Copyright (c) 2020 [Haoran Peng]
+Copyright (c) 2025 [Pengyuan Wei]
+Released under the MIT License
 '''
 import time
 import sys
@@ -10,19 +12,20 @@ import cv2
 import numpy as np
 import yaml
 
-from cbs_mapf.planner import Planner
+from cbs_3d.planner import Planner
 
 
 class Simulator:
-
     def __init__(self):
         # Set up a white 1080p canvas
         self.canvas = np.ones((1080,1920,3), np.uint8)*255 
-        # Draw the rectangluar obstacles on canvas
-        self.draw_rect(np.array([np.array(v) for v in RECT_OBSTACLES.values()]))
-
-        # Transform the vertices to be border-filled rectangles
-        static_obstacles = self.vertices_to_obsts(RECT_OBSTACLES)
+        if RECT_OBSTACLES is not None:
+            # Draw the rectangluar obstacles on canvas
+            self.draw_rect(np.array([np.array(v) for v in RECT_OBSTACLES.values()]))
+            # Transform the vertices to be border-filled rectangles
+            static_obstacles = self.vertices_to_obsts(RECT_OBSTACLES)
+        else:
+            static_obstacles = None
 
         # Call cbs-mapf to plan
         self.planner = Planner(GRID_SIZE, ROBOT_RADIUS, static_obstacles)

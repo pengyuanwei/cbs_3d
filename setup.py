@@ -11,7 +11,7 @@ setuptools.setup(
     author_email = 'gavinsweden@gmail.com',
     maintainer = "Pengyuan Wei",
     maintainer_email = "ucabpw3@ucl.ac.uk",
-    url = 'https://github.com/pengyuanwei/CBS-3D',   # Provide either the link to your github or to your website
+    url = 'https://github.com/pengyuanwei/cbs_3d',   # Provide either the link to your github or to your website
     description = 'Anonymous Multi-Agent Path Finding with Conflict-Based Search and Space-Time A*',   # Give a short description about your library
     long_description = long_description,
     long_description_content_type = 'text/markdown',    
