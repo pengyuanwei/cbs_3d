@@ -19,15 +19,12 @@ class Simulator:
     def __init__(self):
         # Set up a white 1080p canvas
         self.canvas = np.ones((1080,1920,3), np.uint8)*255 
-        if RECT_OBSTACLES is not None:
-            # Draw the rectangluar obstacles on canvas
-            self.draw_rect(np.array([np.array(v) for v in RECT_OBSTACLES.values()]))
-            # Transform the vertices to be border-filled rectangles
-            static_obstacles = self.vertices_to_obsts(RECT_OBSTACLES)
-        else:
-            static_obstacles = None
+        # Draw the rectangluar obstacles on canvas
+        self.draw_rect(np.array([np.array(v) for v in RECT_OBSTACLES.values()]))
+        # Transform the vertices to be border-filled rectangles
+        static_obstacles = self.vertices_to_obsts(RECT_OBSTACLES)
 
-        # Call cbs-mapf to plan
+        # Call cbs_3d to plan
         self.planner = Planner(GRID_SIZE, ROBOT_RADIUS, static_obstacles)
         before = time.time()
         self.path = self.planner.plan(START, GOAL, debug=False)
@@ -126,6 +123,8 @@ def load_scenario(fd):
         RECT_OBSTACLES = data['RECT_OBSTACLES']
         START = data['START']
         GOAL = data['GOAL']
+    if RECT_OBSTACLES is None:
+        raise ValueError("RECT_OBSTACLES cannot be None. At least the map boundaries need to be defined.")
 
 '''
 Use this function to show your START/GOAL configurations
@@ -142,8 +141,8 @@ def show_pos(pos):
 
 
 if __name__ == '__main__':
-    # From command line, call:
-    # python3 visualizer.py scenario1.yaml
+    # From command line, call: python3 visualizer.py scenario1.yaml
+    # The approach supports defining rectangular obstacles. The first obstacle is the boundary of the map.
     load_scenario(sys.argv[1])
     # show_pos(START)
     r = Simulator()

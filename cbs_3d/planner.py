@@ -7,7 +7,7 @@ Released under the MIT License
 
 An implementation of multi-agent path finding using conflict-based search [Sharon et al., 2015]
 '''
-from typing import Optional, List, Tuple, Dict, Callable, Set
+from typing import List, Tuple, Dict, Callable, Set
 import multiprocessing as mp
 from heapq import heappush, heappop
 from itertools import combinations
@@ -26,8 +26,7 @@ from .assigner import *
 class Planner:
     def __init__(self, grid_size: int,
                        robot_radius: int,
-                       static_obstacles: Optional[List[Tuple[int, ...]]] = None,
-                       three_dimension: bool = False):
+                       static_obstacles: List[Tuple[int, ...]]):
 
         self.robot_radius = robot_radius
         self.st_planner = STPlanner(grid_size, robot_radius, static_obstacles)
