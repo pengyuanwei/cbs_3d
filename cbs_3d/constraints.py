@@ -40,5 +40,3 @@ class Constraints:
 
     def __str__(self):
         return str(self.agent_constraints)
-
-

@@ -8,14 +8,14 @@ import numpy as np
 
 
 class Agent:
-
     def __init__(self, start: Tuple[int, int], goal: Tuple[int, int]):
         self.start = np.array(start)
         self.goal = np.array(goal)
 
     # Uniquely identify an agent with its start position
+    # 使用 hash() 计算元组哈希
     def __hash__(self):
-        return int(str(self.start[0]) + str(self.start[1]))
+        return hash((self.start[0], self.start[1]))
 
     def __eq__(self, other: 'Agent'):
         return np.array_equal(self.start, other.start) and \

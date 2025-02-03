@@ -1,0 +1,19 @@
+# 整体平移：所有坐标-100
+
+---
+GOAL:
+- !!python/tuple [440, 465]
+- !!python/tuple [735, 465]
+- !!python/tuple [980, 465]
+- !!python/tuple [1270, 465]
+GRID_SIZE: 30
+RECT_OBSTACLES:
+  0:
+  - [-100, -100]
+  - [1819, 979]
+ROBOT_RADIUS: 110
+START:
+- !!python/tuple [231, 65]
+- !!python/tuple [1430, 65]
+- !!python/tuple [215, 851]
+- !!python/tuple [1430, 851]

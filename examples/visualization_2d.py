@@ -17,8 +17,8 @@ from cbs_3d.planner import Planner
 
 class Simulator:
     def __init__(self):
-        # Set up a white 1080p canvas
-        self.canvas = np.ones((1080,1920,3), np.uint8)*255 
+        # Set up a white canvas
+        self.canvas = np.ones((1200, 1200, 3), np.uint8) * 255 
         # Draw the rectangluar obstacles on canvas
         self.draw_rect(np.array([np.array(v) for v in RECT_OBSTACLES.values()]))
         # Transform the vertices to be border-filled rectangles
@@ -93,7 +93,7 @@ class Simulator:
     '''
     def start(self):
         cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('frame', (1280, 720))
+        cv2.resizeWindow('frame', (1200, 1200))
         wait = True
         try:
             i = 0
@@ -115,7 +115,7 @@ class Simulator:
             cv2.destroyAllWindows()
 
 def load_scenario(fd):
-    with open(fd, 'r') as f:
+    with open(fd, 'r', encoding='utf-8') as f:
         global GRID_SIZE, ROBOT_RADIUS, RECT_OBSTACLES, START, GOAL
         data = yaml.load(f, Loader=yaml.FullLoader)
         GRID_SIZE = data['GRID_SIZE']
@@ -131,8 +131,8 @@ Use this function to show your START/GOAL configurations
 '''
 def show_pos(pos):
     cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('frame', (1280, 720))
-    frame = np.ones((1080,1920,3), np.uint8)*255
+    cv2.resizeWindow('frame', (1200, 1200))
+    frame = np.ones((1200, 1200, 3), np.uint8) * 255 
     for x, y in pos:
         cv2.circle(frame, (x, y), ROBOT_RADIUS-5, (0, 0, 0), 5)
     cv2.imshow('frame', frame)
