@@ -1,0 +1,19 @@
+# 三维地图
+
+---
+GOAL:
+- !!python/tuple [340, 565, 50]
+- !!python/tuple [635, 565, 50]
+- !!python/tuple [1080, 565, 50]
+- !!python/tuple [900, 565, 50]
+GRID_SIZE: 20
+RECT_OBSTACLES:
+  0:
+  - [0, 0, 0]
+  - [1199, 1099, 100]
+ROBOT_RADIUS: 75
+START:
+- !!python/tuple [331, 165, 50]
+- !!python/tuple [730, 165, 50]
+- !!python/tuple [315, 951, 50]
+- !!python/tuple [730, 951, 50]

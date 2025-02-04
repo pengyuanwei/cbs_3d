@@ -24,19 +24,21 @@ from .agent import Agent
 from .assigner import *
 
 class Planner:
-    def __init__(self, grid_size: int,
-                       robot_radius: int,
-                       static_obstacles: List[Tuple[int, ...]]):
+    def __init__(self, 
+                 grid_size: int,
+                 robot_radius: int,
+                 static_obstacles: List[Tuple[int, ...]],
+                 three_dimensional: bool=False):
 
         self.robot_radius = robot_radius
-        self.st_planner = STPlanner(grid_size, robot_radius, static_obstacles)
+        self.st_planner = STPlanner(grid_size, robot_radius, static_obstacles, three_dimensional)
 
     '''
     You can use your own assignment function, the default algorithm greedily assigns
     the closest goal to each start.
     '''
-    def plan(self, starts: List[Tuple[int, int]],
-                   goals: List[Tuple[int, int]],
+    def plan(self, starts: List[Tuple[int, ...]],
+                   goals: List[Tuple[int, ...]],
                    assign: Callable = min_cost,
                    max_iter: int = 200,
                    low_level_max_iter: int = 100,
@@ -54,29 +56,34 @@ class Planner:
         # Compute path for each agent using low level planner
         solution = dict((agent, self.calculate_path(agent, constraints, None)) for agent in self.agents)
 
-        open = []
+        open = []  # 存储待扩展节点的优先队列（最小堆）
         if all(len(path) != 0 for path in solution.values()):
             # Make root node
             node = CTNode(constraints, solution)
             # Min heap for quick extraction
             open.append(node)
 
-        manager = mp.Manager()
+        manager = mp.Manager()  # 跨进程数据共享
         iter_ = 0
         while open and iter_ < max_iter:
             iter_ += 1
 
-            results = manager.list([])
+            results = manager.list([])  # manager.list(): 生成一个进程安全的共享列表，所有子进程可向其追加数据，主进程通过该列表汇总所有子进程的计算结果
+            processes = []  # 存储创建的进程对象，便于统一管理
 
-            processes = []
-
-            # Default to 10 processes maximum
-            for _ in range(max_process if len(open) > max_process else len(open)):
+            # 启动多个进程处理节点 (Default to 10 processes maximum)      
+            # 每次循环从 open 队列中弹出一个节点（heappop），创建一个进程处理该节点：
+            #   target=self.search_node：指定子进程执行的方法。
+            #   args=[node, results]：传递当前节点和共享结果列表。      
+            for _ in range(min(max_process, len(open))):
                 p = mp.Process(target=self.search_node, args=[heappop(open), results])
+                # 将进程对象存入 processes 列表，并立即启动（p.start()）
                 processes.append(p)
                 p.start()
 
+            # 等待进程完成并收集结果
             for p in processes:
+                # 在 multiprocessing 中，.join() 的作用为“等待子进程完成任务后再继续主进程”，是多进程编程中协调并行任务的核心机制。
                 p.join()
 
             for result in results:
@@ -189,7 +196,7 @@ class Planner:
     '''
     def calculate_path(self, agent: Agent, 
                        constraints: Constraints, 
-                       goal_times: Dict[int, Set[Tuple[int, int]]]) -> np.ndarray:
+                       goal_times: Dict[int, Set[Tuple[int, ...]]]) -> np.ndarray:
         return self.st_planner.plan(agent.start, 
                                     agent.goal, 
                                     constraints.setdefault(agent, dict()), 

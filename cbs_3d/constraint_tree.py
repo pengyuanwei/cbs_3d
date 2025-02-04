@@ -10,7 +10,6 @@ from .agent import Agent
 from .constraints import Constraints
 
 class CTNode:
-
     def __init__(self, constraints: Constraints,
                        solution: Dict[Agent, np.ndarray]):
 

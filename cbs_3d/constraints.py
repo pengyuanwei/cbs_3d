@@ -14,13 +14,13 @@ Emulated dictionary of dictionaries
 class Constraints:
 
     def __init__(self):
-        #                                   time,         obstacles
-        self.agent_constraints: Dict[Agent: Dict[int, Set[Tuple[int, int]]]] = dict()
+        #                                      time,         obstacles
+        self.agent_constraints: Dict[Agent: Dict[int, Set[Tuple[int, ...]]]] = dict()
 
     '''
     Deepcopy self with additional constraints
     '''
-    def fork(self, agent: Agent, obstacle: Tuple[int, int], start: int, end: int) -> 'Constraints':
+    def fork(self, agent: Agent, obstacle: Tuple[int, ...], start: int, end: int) -> 'Constraints':
         agent_constraints_copy = deepcopy(self.agent_constraints)
         for time in range(start, end):
             agent_constraints_copy.setdefault(agent, dict()).setdefault(time, set()).add(obstacle)
