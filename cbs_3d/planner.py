@@ -31,6 +31,7 @@ class Planner:
                  three_dimensional: bool=False):
 
         self.robot_radius = robot_radius
+        self.three_dimensional = three_dimensional
         self.st_planner = STPlanner(grid_size, robot_radius, static_obstacles, three_dimensional)
 
     '''
@@ -145,9 +146,9 @@ class Planner:
     '''
     def validate_paths(self, agents, node: CTNode):
         # Check collision pair-wise
-        for agent_i, agent_j in combinations(agents, 2):
+        for agent_i, agent_j in combinations(agents, 2):  # 生成所有智能体对
             time_of_conflict = self.safe_distance(node.solution, agent_i, agent_j)
-            # time_of_conflict=1 if there is not conflict
+            # time_of_conflict=-1 if there is not conflict
             if time_of_conflict == -1:
                 continue
             return agent_i, agent_j, time_of_conflict
@@ -156,7 +157,7 @@ class Planner:
 
     def safe_distance(self, solution: Dict[Agent, np.ndarray], agent_i: Agent, agent_j: Agent) -> int:
         for idx, (point_i, point_j) in enumerate(zip(solution[agent_i], solution[agent_j])):
-            if self.dist(point_i, point_j) > 2*self.robot_radius:
+            if self.elliptical_distance_sq(point_i, point_j) > 1:
                 continue
             return idx
         return -1
@@ -165,23 +166,42 @@ class Planner:
     def dist(point1: np.ndarray, point2: np.ndarray) -> int:
         return int(np.linalg.norm(point1-point2, 2))  # L2 norm
 
+    def elliptical_distance_sq(self, p1: np.ndarray, p2: np.ndarray) -> float:
+        """
+        计算椭球体归一化距离平方
+        - 水平方向安全半径: 2 * self.robot_radius
+        - 垂直方向安全半径: 4 * self.robot_radius (水平的两倍)
+        """
+        dx = (p1[0] - p2[0]) / (2 * self.robot_radius)  # 水平方向缩放
+        dy = (p1[1] - p2[1]) / (2 * self.robot_radius)
+        dz = 0
+        if self.three_dimensional and p1.size > 2 and p2.size > 2:
+            dz = (p1[2] - p2[2]) / (4 * self.robot_radius)  # 垂直方向缩放为水平的两倍
+        return dx**2 + dy**2 + dz**2
+    
     def calculate_constraints(self, node: CTNode,
                                     constrained_agent: Agent,
                                     unchanged_agent: Agent,
                                     time_of_conflict: int) -> Constraints:
         contrained_path = node.solution[constrained_agent]
         unchanged_path = node.solution[unchanged_agent]
-
-        pivot = unchanged_path[time_of_conflict]
+        pivot = unchanged_path[time_of_conflict]  # 冲突坐标
         conflict_end_time = time_of_conflict
+
+        # 扩展冲突时间段（直到两路径分离）
         try:
-            while self.dist(contrained_path[conflict_end_time], pivot) < 2*self.robot_radius:
+            while self.elliptical_distance_sq(contrained_path[conflict_end_time], pivot) <= 1:
                 conflict_end_time += 1
         except IndexError:
-            pass
+            pass  # 路径越界时终止
+
+        # 生成时空约束：禁止 constrained_agent 在 [time_of_conflict, conflict_end_time) 时间段内进入 pivot 位置
         return node.constraints.fork(constrained_agent, tuple(pivot.tolist()), time_of_conflict, conflict_end_time)
 
     def calculate_goal_times(self, node: CTNode, agent: Agent, agents: List[Agent]):
+        '''
+        记录其他智能体到达目标的时间和位置，作为semi_dynamic_obstacles
+        '''
         solution = node.solution
         goal_times = dict()
         for other_agent in agents:
