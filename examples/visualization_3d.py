@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 '''
+Modified based on [Multi-Agent Path Finding](https://github.com/GavinPHR/Multi-Agent-Path-Finding)
+Copyright (c) 2020 [Haoran Peng]
 Copyright (c) 2025 [Pengyuan Wei]
 Released under the MIT License
 '''
@@ -9,12 +11,14 @@ import yaml
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from matplotlib.animation import PillowWriter
 
 from cbs_3d.planner import Planner
 
 
 class Simulator:
-    def __init__(self, three_dimensional=False):
+    def __init__(self, n_agent: int=4, three_dimensional: bool=False):
+        self.n_agent = n_agent
         # Transform the vertices to be border-filled rectangles
         if not three_dimensional:
             static_obstacles = self.vertices_to_obsts(RECT_OBSTACLES)
@@ -24,7 +28,7 @@ class Simulator:
         # Call cbs_3d to plan
         self.planner = Planner(GRID_SIZE, ROBOT_RADIUS, static_obstacles, three_dimensional)
         before = time.time()
-        # A numpy: (agent_idx, path_length, xy)
+        # Synchronous paths. A numpy: (agent_idx, path_length, xy)
         self.path = self.planner.plan(START, GOAL, debug=False)
         after = time.time()
         print('Time elapsed:', "{:.4f}".format(after-before), 'second(s)')
@@ -122,7 +126,32 @@ class Simulator:
             GOAL = data['GOAL']
         if RECT_OBSTACLES is None:
             raise ValueError("RECT_OBSTACLES cannot be None. At least the map boundaries need to be defined.")
-        
+
+    @staticmethod
+    def random_scenario(n_agent):
+        global GRID_SIZE, ROBOT_RADIUS, RECT_OBSTACLES, START, GOAL
+        GRID_SIZE = 20
+        ROBOT_RADIUS = 75
+        RECT_OBSTACLES = {0: [[0, 0, 0], [1349, 1349, 1349]]}
+        def create_points(N, cube_size=1349, max_attempts=1000):
+            points = []
+            attempts = 0
+            while len(points) < N and attempts < max_attempts:
+                # 在[76, 1274)范围内随机生成一个点
+                point = np.random.randint(76, 1274, 3)  # 生成一个 NumPy 数组
+                point_tuple = tuple(point.tolist())  # 转换为标准 Python int 类型
+                # 检查与已生成点之间的椭球体距离
+                if all(np.sum(((point - p) / np.array([150, 150, 300]))**2) > 1 for p in points):
+                    points.append(point_tuple)
+                attempts += 1
+                if attempts == max_attempts:
+                    raise RuntimeError("Reached maximum attempts without generating enough points.")
+            # 按 x 轴排序
+            points.sort(key=lambda p: p[0])  # 直接使用 list.sort() 进行排序
+            return points
+        START = create_points(n_agent)
+        GOAL = create_points(n_agent)
+    
     def show(self):
         particle_paths = self.path
 
@@ -132,7 +161,7 @@ class Simulator:
 
         # 初始化粒子和轨迹
         particles, = ax.plot([], [], [], 'ro', markersize=8)
-        trajectories = [ax.plot([], [], [], lw=1)[0] for _ in range(4)]
+        trajectories = [ax.plot([], [], [], lw=1)[0] for _ in range(self.n_agent)]
 
         # 设置坐标轴范围
         ax.set_xlim([RECT_OBSTACLES[0][0][0], RECT_OBSTACLES[0][1][0]])
@@ -168,14 +197,21 @@ class Simulator:
         plt.draw()  # 先绘制静态图像
         plt.waitforbuttonpress()  # 等待用户点击窗口或按键
         # 创建动画
+        for i in range(self.n_agent):
+            print(len(particle_paths[i]))
         ani = animation.FuncAnimation(fig, update, frames=particle_paths.shape[1], init_func=init, blit=False, interval=50, repeat=False)
+        # 保存动画为 MP4
+        # ani.save("animation.gif", writer=PillowWriter(fps=20))
         plt.show()
 
 
 if __name__ == '__main__':
     # From command line, call: python3 visualizer.py scenario1.yaml
     # The approach supports defining rectangular obstacles. The first obstacle is the boundary of the map.
-    Simulator.load_scenario(sys.argv[1])
+    # Simulator.load_scenario(sys.argv[1])
 
-    r = Simulator(three_dimensional=True)
+    # 随机生成起点和终点
+    n_agent = 8
+    Simulator.random_scenario(n_agent)
+    r = Simulator(n_agent, three_dimensional=True)
     r.show()
