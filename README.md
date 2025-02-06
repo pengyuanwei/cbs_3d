@@ -8,3 +8,8 @@ The program will output the synchronization paths of all agents.
 
 ## Obstacles
 The approach supports defining rectangular obstacles. The first obstacle is the boundary of the map.
+
+## Visualization
+<p align="center">
+  <img width="500" src="examples/animation.gif">
+</p>

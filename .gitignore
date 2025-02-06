@@ -9,3 +9,11 @@ __pycache__/
 # 忽略构建文件
 dist/
 build/
+
+# 忽略文件
+tests/
+examples/animation1.gif
+examples/scenario4.yaml
+examples/scenario5.yaml
+examples/scenario6.yaml
+examples/scenario8.yaml
