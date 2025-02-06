@@ -41,7 +41,7 @@ class Planner:
     def plan(self, starts: List[Tuple[int, ...]],
                    goals: List[Tuple[int, ...]],
                    assign: Callable = min_cost,
-                   max_iter: int = 200,
+                   max_iter: int = 20,
                    low_level_max_iter: int = 100,
                    max_process: int = 10,
                    debug: bool = False) -> np.ndarray:
@@ -67,6 +67,8 @@ class Planner:
         manager = mp.Manager()  # 跨进程数据共享
         iter_ = 0
         while open and iter_ < max_iter:
+            if debug:
+                print("cbs_3d: Iterations:", iter_)
             iter_ += 1
 
             results = manager.list([])  # manager.list(): 生成一个进程安全的共享列表，所有子进程可向其追加数据，主进程通过该列表汇总所有子进程的计算结果
@@ -90,7 +92,7 @@ class Planner:
             for result in results:
                 if len(result) == 1:
                     if debug:
-                        print('cbs_3d: Paths found after about {0} iterations'.format(4 * iter_))
+                        print('cbs_3d: Solution found after about {0} iterations'.format(iter_))
                     return result[0]
                 if result[0]:
                     heappush(open, result[0])

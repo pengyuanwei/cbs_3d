@@ -7,15 +7,15 @@ Released under the MIT License
 '''
 import time
 import sys
-from copy import deepcopy
 import cv2
-import numpy as np
 import yaml
+import numpy as np
+from copy import deepcopy
 
 from cbs_3d.planner import Planner
 
 
-class Simulator:
+class Simulator2D:
     def __init__(self):
         # Set up a white canvas
         self.canvas = np.ones((1200, 1200, 3), np.uint8) * 255 
@@ -145,5 +145,5 @@ if __name__ == '__main__':
     # The approach supports defining rectangular obstacles. The first obstacle is the boundary of the map.
     load_scenario(sys.argv[1])
     # show_pos(START)
-    r = Simulator()
+    r = Simulator2D()
     r.start()
