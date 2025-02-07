@@ -40,7 +40,7 @@ class Planner:
     '''
     def plan(self, starts: List[Tuple[int, ...]],
                    goals: List[Tuple[int, ...]],
-                   assign: Callable = min_cost,
+                   assign: Callable = no_assignment,
                    max_iter: int = 20,
                    low_level_max_iter: int = 100,
                    max_process: int = 10,

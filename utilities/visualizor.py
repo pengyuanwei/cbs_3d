@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.animation import PillowWriter
 
-from .planner import Planner
+from cbs_3d.planner import Planner
 
 
 class Simulator:
@@ -130,7 +130,7 @@ class Simulator:
             raise ValueError("RECT_OBSTACLES cannot be None. At least the map boundaries need to be defined.")
 
     @staticmethod
-    def random_scenario(n_agent):
+    def random_scenario(n_agents):
         global GRID_SIZE, ROBOT_RADIUS, RECT_OBSTACLES, START, GOAL
         GRID_SIZE = 20
         ROBOT_RADIUS = 75
@@ -151,9 +151,18 @@ class Simulator:
             # 按 x 轴排序
             points.sort(key=lambda p: p[0])  # 直接使用 list.sort() 进行排序
             return points
-        START = create_points(n_agent)
-        GOAL = create_points(n_agent)
-    
+        START = create_points(n_agents)
+        GOAL = create_points(n_agents)
+
+    @staticmethod
+    def given_scenario(sources, targets):
+        global GRID_SIZE, ROBOT_RADIUS, RECT_OBSTACLES, START, GOAL
+        GRID_SIZE = 20
+        ROBOT_RADIUS = 75
+        RECT_OBSTACLES = {0: [[0, 0, 1200], [1349, 1349, 2549]]}
+        START = sources
+        GOAL = targets
+
     def show(self):
         particle_paths = self.path
 

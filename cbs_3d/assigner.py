@@ -48,5 +48,12 @@ def greedy_assign(starts: List[Tuple[int, int]], goals: List[Tuple[int, int]]):
         agents.append(Agent(start, closest_goal))
     return agents
 
+# No task assignment
+def no_assignment(starts: List[Tuple[int, int]], goals: List[Tuple[int, int]]):
+    # The number of start positions must be equal to the number of goal positions
+    assert(len(starts) == len(goals))
 
-
+    agents = []
+    for i, start in enumerate(starts):
+        agents.append(Agent(start, goals[i]))
+    return agents

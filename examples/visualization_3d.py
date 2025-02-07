@@ -5,7 +5,7 @@ Copyright (c) 2020 [Haoran Peng]
 Copyright (c) 2025 [Pengyuan Wei]
 Released under the MIT License
 '''
-from cbs_3d.visualizor import Simulator
+from utilities.visualizor import Simulator
 
 
 if __name__ == '__main__':

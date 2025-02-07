@@ -18,7 +18,7 @@ from visualization_3d import Simulator
 
 
 if __name__ == '__main__':
-    n_agent = 8
+    n_agents = 8
 
     computation_times = []
     path_lengths = []
@@ -26,8 +26,8 @@ if __name__ == '__main__':
     for iter_ in range(500):
         print("The senario No.", iter_)
         # 随机生成起点和终点
-        Simulator.random_scenario(n_agent)
-        r = Simulator(n_agent, three_dimensional=True)
+        Simulator.random_scenario(n_agents)
+        r = Simulator(n_agents, three_dimensional=True)
         computation_times.append(r.elapsed_time)
         if r.path.size > 0:  # 判断是否为空
             path_lengths.append(len(r.path[0]))
