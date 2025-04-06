@@ -11,6 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.animation import PillowWriter
+from scipy.spatial.distance import cdist
+from scipy.optimize import linear_sum_assignment
 
 from cbs_3d.planner import Planner
 
@@ -130,7 +132,7 @@ class Simulator:
             raise ValueError("RECT_OBSTACLES cannot be None. At least the map boundaries need to be defined.")
 
     @staticmethod
-    def random_scenario(n_agents):
+    def random_scenario(n_agents:int, anonymous_mapf:bool=True):
         global GRID_SIZE, ROBOT_RADIUS, RECT_OBSTACLES, START, GOAL
         GRID_SIZE = 20
         ROBOT_RADIUS = 75
@@ -148,11 +150,23 @@ class Simulator:
                 attempts += 1
                 if attempts == max_attempts:
                     raise RuntimeError("Reached maximum attempts without generating enough points.")
-            # 按 x 轴排序
-            points.sort(key=lambda p: p[0])  # 直接使用 list.sort() 进行排序
-            return points
-        START = create_points(n_agents)
-        GOAL = create_points(n_agents)
+            return np.array(points)
+        start_positions = create_points(n_agents)
+        target_positions = create_points(n_agents)
+        if anonymous_mapf:
+            row_indices, col_indices = Simulator.optimal_pairing(start_positions, target_positions)
+            START = start_positions[row_indices]
+            GOAL = target_positions[col_indices]
+        else:
+            START = start_positions
+            GOAL = target_positions
+
+    @staticmethod
+    def optimal_pairing(coords1, coords2):
+        # 计算两组坐标之间的距离矩阵
+        distance_matrix = cdist(coords1, coords2, metric='euclidean')
+        # 使用匈牙利算法返回最优匹配
+        return linear_sum_assignment(distance_matrix)
 
     @staticmethod
     def given_scenario(sources, targets):
@@ -181,7 +195,7 @@ class Simulator:
         ax.set_xlabel("X Axis")
         ax.set_ylabel("Y Axis")
         ax.set_zlabel("Z Axis")
-        ax.set_title("Four Particles Moving in Different Trajectories")
+        ax.set_title(f"{self.n_agent} Particles Moving in Different Trajectories")
 
         # 初始化函数
         def init():
@@ -210,5 +224,5 @@ class Simulator:
         # 创建动画
         ani = animation.FuncAnimation(fig, update, frames=particle_paths.shape[1], init_func=init, blit=False, interval=50, repeat=False)
         # 保存动画为 MP4
-        # ani.save("animation.gif", writer=PillowWriter(fps=20))
+        ani.save("animation.gif", writer=PillowWriter(fps=20))
         plt.show()

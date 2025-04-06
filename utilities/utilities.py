@@ -6,6 +6,10 @@ def read_csv_file(file_path):
     '''
     读取.csv格式的路径
     '''
+    if not os.path.exists(file_path):
+        print(f"错误：文件路径无效 -> {file_path}")
+        return None
+    
     data_list = []
     with open(file_path, 'r', newline='', encoding='utf-8') as file:
         reader = csv.reader(file)
@@ -14,6 +18,7 @@ def read_csv_file(file_path):
             filtered_row = [item for item in row if item.strip()]
             data_list.append(filtered_row)
     return data_list
+
 
 def read_paths(csv_data):
     '''
